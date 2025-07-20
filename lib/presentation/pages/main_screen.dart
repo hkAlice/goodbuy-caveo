@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:goodbuy/presentation/widgets/product_item_widget.dart';
 import 'package:goodbuy/shared/providers.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
@@ -35,7 +36,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final productsAsyncValue = ref.watch(productsProvider);
-
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('GoodBuy'),
@@ -54,10 +55,7 @@ class _MainScreenState extends ConsumerState<MainScreen> {
               }
 
               final product = products.elementAt(index);
-              return ListTile(
-                title: Text(product.title),
-                subtitle: Text('R\$ ${product.price.toString()}'),
-              );
+              return ProductItemWidget(product: product,);
             },
           );
         },

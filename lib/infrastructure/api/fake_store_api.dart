@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:goodbuy/application/dtos/product_dto.dart';
 
 /// API do FakeStore - docs: https://fakestoreapi.com/docs
-/// Vamos fingir que 'page' seria o queryParameter para paginacao
+/// vamos fingir que 'page' seria o queryParameter para paginacao
 class FakeStoreApi {
   final Dio _dio;
 

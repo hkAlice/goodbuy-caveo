@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:goodbuy/domain/entities/product.dart';
 
-// todo: usar esse widget
 class ProductItemWidget extends StatelessWidget {
-  const ProductItemWidget({super.key});
+  final Product product;
+
+  const ProductItemWidget({super.key, required this.product});
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return ListTile(
+      title: Text(product.title),
+      subtitle: Text('R\$ ${product.price.toString()}'),
+    );
   }
 }

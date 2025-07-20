@@ -40,19 +40,24 @@ class ProductNotifier extends StateNotifier<AsyncValue<List<Product>>> {
 
   final Ref _ref;
   int _page = 1;
-  final int _limit = 10;
+  final int _limit = 20;
   bool _isLoading = false;
 
   Future<void> _fetchProducts() async {
     if (_isLoading) return;
     _isLoading = true;
 
-    final getProductsUseCase = _ref.read(getProductsUseCaseProvider);
-    final products = await getProductsUseCase.call(_page, _limit);
+    try {
+      final getProductsUseCase = _ref.read(getProductsUseCaseProvider);
+      final products = await getProductsUseCase.call(_page, _limit);
 
-    state = AsyncValue.data([...state.value ?? [], ...products]);
-    _page++;
-    _isLoading = false;
+      state = AsyncValue.data([...state.value ?? [], ...products]);
+      _page++;
+    } catch (e, s) {
+      state = AsyncValue.error(e, s);
+    } finally {
+      _isLoading = false;
+    }
   }
 
   Future<void> fetchMoreProducts() async {

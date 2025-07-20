@@ -16,6 +16,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   void initState() {
     super.initState();
+
+    // todo: ideal seria adicionar um postFrameCallback para carregar mais caso a tela nao preencha
+
     _scrollController.addListener(_onScroll);
   }
 
@@ -28,7 +31,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   void _onScroll() {
     // verifica se scroll chegou no fim e carrega mais produtos
     // todo: arrumar para pre-carregar *antes* do maxScrollExtent!
-    if (_scrollController.position.pixels == _scrollController.position.maxScrollExtent) {
+    final offset = 250;
+    if (_scrollController.hasClients &&
+         _scrollController.position.pixels >= _scrollController.position.maxScrollExtent - offset) {
       ref.read(productsProvider.notifier).fetchMoreProducts();
     }
   }
@@ -36,7 +41,8 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   @override
   Widget build(BuildContext context) {
     final productsAsyncValue = ref.watch(productsProvider);
-    
+
+    // ideal seria errors nao apagarem o conteudo todo!
     return Scaffold(
       appBar: AppBar(
         title: const Text('GoodBuy'),
@@ -49,8 +55,13 @@ class _MainScreenState extends ConsumerState<MainScreen> {
             itemCount: products.length + 1,
             itemBuilder: (context, index) {
               if (index == products.length) {
-                return const Center(
-                  child: CircularProgressIndicator(),
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircularProgressIndicator(),
+                    VerticalDivider(),
+                    Text("Carregando")
+                  ],
                 );
               }
 
@@ -62,9 +73,25 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         loading: () => const Center(
           child: CircularProgressIndicator(),
         ),
-        error: (error, stackTrace) => const Center(
-          child: Text('deu ruim'),
-        ),
+        error: (error, stackTrace) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.error_outline_rounded, size: 48),
+                const SizedBox(height: 16),
+                const Text('Falha ao carregar conteúdo.'),
+                const SizedBox(height: 16),
+                OutlinedButton(
+                  onPressed: () {
+                    ref.read(productsProvider.notifier).fetchMoreProducts();
+                  },
+                  child: const Text('Tentar novamente'),
+                ),
+              ],
+            ),
+          );
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
           items: const [

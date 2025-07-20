@@ -27,8 +27,35 @@ final getProductsUseCaseProvider = Provider<GetProductsUseCase>((ref) {
   return LoadProductsUseCase(repository);
 });
 
-final productsProvider = FutureProvider.autoDispose<List<Product>>((ref) async {
-  final getProductsUseCase = ref.watch(getProductsUseCaseProvider);
-  // todo: tirar paginacao hardcoded aqui
-  return getProductsUseCase(1, 20);
+final productsProvider =
+    StateNotifierProvider<ProductNotifier, AsyncValue<List<Product>>>((ref) {
+  return ProductNotifier(ref);
 });
+
+// todo: idealmente estaria em /application/
+class ProductNotifier extends StateNotifier<AsyncValue<List<Product>>> {
+  ProductNotifier(this._ref) : super(const AsyncValue.loading()) {
+    _fetchProducts();
+  }
+
+  final Ref _ref;
+  int _page = 1;
+  final int _limit = 10;
+  bool _isLoading = false;
+
+  Future<void> _fetchProducts() async {
+    if (_isLoading) return;
+    _isLoading = true;
+
+    final getProductsUseCase = _ref.read(getProductsUseCaseProvider);
+    final products = await getProductsUseCase.call(_page, _limit);
+
+    state = AsyncValue.data([...state.value ?? [], ...products]);
+    _page++;
+    _isLoading = false;
+  }
+
+  Future<void> fetchMoreProducts() async {
+    await _fetchProducts();
+  }
+}

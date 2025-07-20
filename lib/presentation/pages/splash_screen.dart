@@ -20,7 +20,7 @@ class SplashScreen extends ConsumerWidget {
         loading: () {},
         error: (error, stackTrace) {
           // todo: no exception, continuar para mainscreen com status de falha
-          throw Exception("nao gostou");
+          throw Exception('nao gostou');
         },
       );
     });
@@ -29,9 +29,9 @@ class SplashScreen extends ConsumerWidget {
       child: Container(
         color: Theme.of(context).primaryColor,
         child: Center(
-            child: Text("Goodbuy",
-            style: Theme.of(context).textTheme.headlineLarge,
-          )
+            child: Text('Goodbuy',
+              style: Theme.of(context).textTheme.headlineLarge,
+            )
         ),
       ),
     );

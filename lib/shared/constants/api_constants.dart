@@ -1,4 +1,4 @@
-/// Constants da API do FakeStore - docs aqui https://fakestoreapi.com/docs
+/// Constants de API
 /// Timeout em 5 segundos - ideal seria usar Dio RetryInterceptor ou backoff + jitter
 class ApiConstants {
   static const String baseUrl = 'https://fakestoreapi.com';

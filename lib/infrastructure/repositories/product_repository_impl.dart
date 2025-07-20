@@ -10,7 +10,7 @@ class ProductRepositoryImpl implements ProductRepository {
 
   @override
   Future<List<Product>> getProducts(int page, int limit) async {
-    final productsDto = await _api.getProducts(limit: limit);
+    final productsDto = await _api.getProducts(page: page, limit: limit);
     return productsDto.map((dto) => dto.toDomain()).toList();
   }
 }

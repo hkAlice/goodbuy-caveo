@@ -5,6 +5,13 @@ class SplashScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Material(
+      child: Container(
+        color: Theme.of(context).primaryColor,
+        child: Center(
+          child: Text("Goodbuy", style: Theme.of(context).textTheme.headlineLarge,)
+        ),
+      ),
+    );
   }
 }

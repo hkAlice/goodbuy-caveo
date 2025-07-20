@@ -26,8 +26,11 @@ class ProductDto {
       _$ProductDtoFromJson(json);
 
   Map<String, dynamic> toJson() => _$ProductDtoToJson(this);
+}
 
-  Product toEntity() => Product(
+extension ProductDtoX on ProductDto {
+  Product toDomain() {
+    return Product(
       id: id,
       title: title,
       price: price,
@@ -35,13 +38,5 @@ class ProductDto {
       category: category,
       image: image,
     );
-
-  static ProductDto fromEntity(Product product) => ProductDto(
-      id: product.id,
-      title: product.title,
-      price: product.price,
-      description: product.description,
-      category: product.category,
-      image: product.image,
-    );
+  }
 }

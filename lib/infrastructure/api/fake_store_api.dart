@@ -19,7 +19,7 @@ class FakeStoreApi {
       final List<dynamic> data = response.data;
       return data.map((json) => ProductDto.fromJson(json)).toList();
     } catch (e) {
-      throw Exception('errouuuuu $e');
+      throw Exception('Exception, stack trace: $e');
     }
   }
 }

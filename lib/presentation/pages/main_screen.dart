@@ -12,6 +12,7 @@ class MainScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('GoodBuy'),
+        elevation: 2.0,
       ),
       body: productsAsyncValue.when(
         data: (products) {
@@ -19,17 +20,9 @@ class MainScreen extends ConsumerWidget {
             itemCount: products.length,
             itemBuilder: (context, index) {
               final product = products.elementAt(index);
-              return Card(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 200,
-                      child: Placeholder(),
-                    ),
-                    Text(product.title),
-                    Text("testeeee oi :3")
-                  ]
-                ),
+              return ListTile(
+                title: Text(product.title),
+                subtitle: Text('R\$ ${product.price.toString()}'),
               );
             },
           );
@@ -40,6 +33,13 @@ class MainScreen extends ConsumerWidget {
         error: (error, stackTrace) => const Center(
           child: Text('deu ruim'),
         ),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(icon: Icon(Icons.sell), label: 'Produtos'),
+          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Carrinho'),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+        ]
       ),
     );
   }

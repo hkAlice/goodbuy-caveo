@@ -81,4 +81,20 @@ void main() {
       expect(result.data![1].id, 2);
     });
   });
+
+  test('retorna erro quando comando falhar', () async {
+      final testException = Exception('Test error');
+      final repository = FakeProductRepository(exception: testException);
+      final command = LoadProductsCommand(
+        repository,
+        page: 1,
+        limit: 10,
+      );
+      
+      // teste command execute
+      final result = await command.execute();
+
+      expect(result.isSuccess, false);
+      expect(result.error, testException);
+    });
 }

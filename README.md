@@ -13,7 +13,6 @@ App fictício simulando um e-commerce para fins do teste técnico para a <b>Cave
 - Mapeamento de DTOs e serialização de objetos com json_serializable;
 - Testes implementados para repositórios, conversões DTO->Entity e comandos;
 - Utiliza cache local e animações básicas.
-
 ---
 
 ## Estrutura 
@@ -61,6 +60,7 @@ test/
 - **Flutter Test** - Testes
 - **Shared Preferences** – Cache
 - **flutter_animate** – Animacao
+---
 
 ## Build & Teste
 
@@ -76,9 +76,11 @@ Para testes:
 ```shell
 flutter test
 ```
+---
 
 ## Melhorias
 - Testes para widgets, golden tests;
 - Error handling na UI mais robusto;
 - Separar `providers.dart` e mover fora de `./lib/shared/`;
+- Timer em SplashScreen por motivos de branding;
 - Cache melhor (expirar, integrar em API client, etc).

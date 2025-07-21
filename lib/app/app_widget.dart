@@ -9,7 +9,17 @@ class GoodBuyApp extends StatelessWidget {
     return MaterialApp(
       title: 'GoodBuy',
       theme: ThemeData(
+        useMaterial3: true,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: <TargetPlatform, PageTransitionsBuilder>{
+            TargetPlatform.android: FadeForwardsPageTransitionsBuilder(),
+            TargetPlatform.windows: FadeForwardsPageTransitionsBuilder(),
+            TargetPlatform.iOS:     CupertinoPageTransitionsBuilder(),
+            TargetPlatform.linux:   OpenUpwardsPageTransitionsBuilder(),
+            TargetPlatform.macOS:   FadeUpwardsPageTransitionsBuilder(),
+          },
+        ),
       ),
       home: const SplashScreen(),
     );

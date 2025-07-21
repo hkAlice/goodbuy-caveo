@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:goodbuy/domain/entities/product.dart';
 
 class ProductItemWidget extends StatelessWidget {
@@ -13,6 +14,8 @@ class ProductItemWidget extends StatelessWidget {
       trailing: IconButton(icon: Icon(Icons.star_border_rounded), onPressed: () => {},),
       title: Text(product.title),
       subtitle: Text('R\$ ${product.price.toString()}'),
-    );
+      onTap: () {},
+      visualDensity: VisualDensity.comfortable,
+    ).animate().fadeIn();
   }
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:goodbuy/presentation/pages/main_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:goodbuy/shared/providers.dart';
 
 class SplashScreen extends ConsumerWidget {
@@ -10,20 +10,12 @@ class SplashScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen(productsProvider, (previous, next) {
       next.when(
-        data: (data) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const MainScreen(),
-            ),
-          );
+        data: (data) async {
+          context.go('/main');
         },
         loading: () {},
-        error: (error, stackTrace) {
-          Navigator.of(context).pushReplacement(
-            MaterialPageRoute(
-              builder: (context) => const MainScreen(),
-            ),
-          );
+        error: (error, stackTrace) async {
+          context.go('/main');
         },
       );
     });
@@ -33,7 +25,7 @@ class SplashScreen extends ConsumerWidget {
         color: Theme.of(context).primaryColor,
         child: Center(
             child: Text('Goodbuy',
-              style: Theme.of(context).textTheme.headlineLarge,
+              style: Theme.of(context).textTheme.headlineLarge!.apply(color: Colors.white),
             )
         ),
       ),

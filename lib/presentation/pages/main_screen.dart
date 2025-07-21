@@ -19,7 +19,9 @@ class _MainScreenState extends ConsumerState<MainScreen> {
   void initState() {
     super.initState();
 
-    // todo: ideal seria adicionar um postFrameCallback para carregar mais caso a tela nao preencha
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _onInitScrollCheck();
+    });
 
     _scrollController.addListener(_onScroll);
   }
@@ -30,15 +32,26 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     super.dispose();
   }
 
+  void _onInitScrollCheck() {
+    // verifica se precisamos buscar mais conteudo para preencher tela
+    if (_scrollController.hasClients &&
+        _scrollController.position.maxScrollExtent <= _scrollController.position.viewportDimension) {
+          _fetchMore();
+    }
+  }
+
   void _onScroll() {
     // verifica se scroll chegou no fim e carrega mais produtos
-    // todo: arrumar para pre-carregar *antes* do maxScrollExtent!
     final offset = 250;
     if (_scrollController.hasClients &&
          _scrollController.position.pixels >= _scrollController.position.maxScrollExtent - offset) {
-      if (!ref.read(productsProvider.notifier).hasError) {
-        ref.read(productsProvider.notifier).fetchMoreProducts();
-      }
+          _fetchMore();
+    }
+  }
+
+  void _fetchMore() {
+    if (!ref.read(productsProvider.notifier).hasError) {
+      ref.read(productsProvider.notifier).fetchMoreProducts();
     }
   }
 
@@ -47,58 +60,49 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final productsAsyncValue = ref.watch(productsProvider);
     final hasError = ref.read(productsProvider.notifier).hasError;
 
-    // ideal seria errors nao apagarem o conteudo todo!
     return Scaffold(
       appBar: AppBar(
         title: const Text('GoodBuy'),
         elevation: 2.0,
       ),
-      body: SingleChildScrollView(
-        controller: _scrollController,
-        child: productsAsyncValue.when(
-          skipError: true,
-          data: (products) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                ListView.builder(
-                  //controller: _scrollController,
-                  itemCount: products.length + 1,
-                  shrinkWrap: true,
-                  itemBuilder: (context, index) {
-                    if (index == products.length) {
-                      if (hasError) {
-                        return PageErrorWidget(
-                          onTap: () {
-                            ref.read(productsProvider.notifier).fetchMoreProducts();
-                          },
-                        );
-                      }
-                      else {
-                        return LoadingWidget();
-                      }
-                    }
-                
-                    final product = products.elementAt(index);
-                    return ProductItemWidget(product: product,);
-                  },
-                ),
-              ],
-            );
-          },
-          loading: () => Center(
-            child: LoadingWidget(),
-          ),
-          error: (error, stackTrace) {
-            return Center(
-              child: PageErrorWidget(
-                onTap: () {
-                  ref.invalidate(productsProvider);
-                },
-              ),
-            );
-          },
+      body: productsAsyncValue.when(
+        skipError: true,
+        data: (products) {
+          return ListView.builder(
+            controller: _scrollController,
+            itemCount: products.length + 1,
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              if (index == products.length) {
+                if (hasError) {
+                  return PageErrorWidget(
+                    onTap: () {
+                      ref.read(productsProvider.notifier).fetchMoreProducts();
+                    },
+                  );
+                }
+                else {
+                  return LoadingWidget();
+                }
+              }
+          
+              final product = products.elementAt(index);
+              return ProductItemWidget(product: product,);
+            },
+          );
+        },
+        loading: () => Center(
+          child: LoadingWidget(),
         ),
+        error: (error, stackTrace) {
+          return Center(
+            child: PageErrorWidget(
+              onTap: () {
+                ref.invalidate(productsProvider);
+              },
+            ),
+          );
+        },
       ),
       bottomNavigationBar: BottomNavigationBar(
           items: const [

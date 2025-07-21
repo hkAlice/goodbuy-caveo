@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:goodbuy/presentation/pages/splash_screen.dart';
+import 'package:goodbuy/app/routes.dart';
 
 class GoodBuyApp extends StatelessWidget {
   const GoodBuyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'GoodBuy',
       theme: ThemeData(
         useMaterial3: true,
@@ -21,7 +21,7 @@ class GoodBuyApp extends StatelessWidget {
           },
         ),
       ),
-      home: const SplashScreen(),
+      routerConfig: router,
     );
   }
 }

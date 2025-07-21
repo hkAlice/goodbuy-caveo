@@ -80,7 +80,6 @@ class ProductNotifier extends StateNotifier<AsyncValue<List<Product>>> {
         state = AsyncValue.error(e, s);
       }
       else {
-        // todo: seria legal manter o state anterior
         state = AsyncValue.data(previous);
       }
     } finally {

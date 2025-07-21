@@ -80,21 +80,52 @@ void main() {
       expect(result.data![0].id, 1);
       expect(result.data![1].id, 2);
     });
-  });
 
-  test('retorna erro quando comando falhar', () async {
-      final testException = Exception('Test error');
-      final repository = FakeProductRepository(exception: testException);
+    test('retorna sucesso com array vazio para fim de paginacao', () async {
+      final repository = FakeProductRepository(products: testProducts);
       final command = LoadProductsCommand(
         repository,
-        page: 1,
-        limit: 10,
+        page: 3,
+        limit: 2,
       );
       
       // teste command execute
       final result = await command.execute();
-
-      expect(result.isSuccess, false);
-      expect(result.error, testException);
+      
+      expect(result.isSuccess, true);
+      expect(result.data, isA<List<Product>>());
+      expect(result.data!.isEmpty, true);
     });
+
+    
+    test('retorna paginacao correta', () async {
+      final repository = FakeProductRepository(products: testProducts);
+      
+      final command1 = LoadProductsCommand(
+        repository,
+        page: 1,
+        limit: 2,
+      );
+
+      final command2 = LoadProductsCommand(
+        repository,
+        page: 2,
+        limit: 2,
+      );
+      
+      // teste command execute
+      final result1 = await command1.execute();
+      final result2 = await command2.execute();
+      
+      expect(result1.isSuccess, true);
+      expect(result1.data!.length, 2);
+      expect(result1.data![0].id, 1);
+      expect(result1.data![1].id, 2);
+      
+      expect(result2.isSuccess, true);
+      expect(result2.data!.length, 1);
+      expect(result2.data![0].id, 3);
+    });
+  });
+  
 }

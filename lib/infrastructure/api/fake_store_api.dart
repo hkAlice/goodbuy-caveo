@@ -34,7 +34,6 @@ class FakeStoreApi {
         },
       );
 
-      //throw Exception("teste!!! :3");
       final List<dynamic> data = response.data;
       await CacheHelper.saveCache('getProductsInitialPage', jsonEncode(data));
       return data.map((json) => ProductDto.fromJson(json)).toList();

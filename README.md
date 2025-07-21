@@ -64,7 +64,7 @@ test/
 
 ## Build & Teste
 
-Foi utilizado Flutter SDK 3.32.7, testado em Windows e Android.
+Foi utilizado Flutter SDK 3.32.7, testado em Windows, Linux e Android.
 
 Rode o projeto com:
 ```shell

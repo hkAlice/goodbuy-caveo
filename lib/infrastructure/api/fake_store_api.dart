@@ -35,7 +35,11 @@ class FakeStoreApi {
       );
 
       final List<dynamic> data = response.data;
-      await CacheHelper.saveCache('getProductsInitialPage', jsonEncode(data));
+
+      if (page == 1) {
+        await CacheHelper.saveCache('getProductsInitialPage', jsonEncode(data));
+      }
+      
       return data.map((json) => ProductDto.fromJson(json)).toList();
     } on DioException catch (e) {
       if (e.type == DioExceptionType.connectionTimeout ||

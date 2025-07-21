@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:goodbuy/presentation/widgets/loading_widget.dart';
+import 'package:goodbuy/presentation/widgets/page_error_widget.dart';
 import 'package:goodbuy/presentation/widgets/product_item_widget.dart';
 import 'package:goodbuy/shared/providers.dart';
 
@@ -34,13 +36,16 @@ class _MainScreenState extends ConsumerState<MainScreen> {
     final offset = 250;
     if (_scrollController.hasClients &&
          _scrollController.position.pixels >= _scrollController.position.maxScrollExtent - offset) {
-      ref.read(productsProvider.notifier).fetchMoreProducts();
+      if (!ref.read(productsProvider.notifier).hasError) {
+        ref.read(productsProvider.notifier).fetchMoreProducts();
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final productsAsyncValue = ref.watch(productsProvider);
+    final hasError = ref.read(productsProvider.notifier).hasError;
 
     // ideal seria errors nao apagarem o conteudo todo!
     return Scaffold(
@@ -48,50 +53,52 @@ class _MainScreenState extends ConsumerState<MainScreen> {
         title: const Text('GoodBuy'),
         elevation: 2.0,
       ),
-      body: productsAsyncValue.when(
-        data: (products) {
-          return ListView.builder(
-            controller: _scrollController,
-            itemCount: products.length + 1,
-            itemBuilder: (context, index) {
-              if (index == products.length) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    CircularProgressIndicator(),
-                    VerticalDivider(),
-                    Text("Carregando")
-                  ],
-                );
-              }
-
-              final product = products.elementAt(index);
-              return ProductItemWidget(product: product,);
-            },
-          );
-        },
-        loading: () => const Center(
-          child: CircularProgressIndicator(),
-        ),
-        error: (error, stackTrace) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: SingleChildScrollView(
+        controller: _scrollController,
+        child: productsAsyncValue.when(
+          skipError: true,
+          data: (products) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(Icons.error_outline_rounded, size: 48),
-                const SizedBox(height: 16),
-                const Text('Falha ao carregar conteúdo.'),
-                const SizedBox(height: 16),
-                OutlinedButton(
-                  onPressed: () {
-                    ref.read(productsProvider.notifier).fetchMoreProducts();
+                ListView.builder(
+                  //controller: _scrollController,
+                  itemCount: products.length + 1,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    if (index == products.length) {
+                      if (hasError) {
+                        return PageErrorWidget(
+                          onTap: () {
+                            ref.read(productsProvider.notifier).fetchMoreProducts();
+                          },
+                        );
+                      }
+                      else {
+                        return LoadingWidget();
+                      }
+                    }
+                
+                    final product = products.elementAt(index);
+                    return ProductItemWidget(product: product,);
                   },
-                  child: const Text('Tentar novamente'),
                 ),
               ],
-            ),
-          );
-        },
+            );
+          },
+          loading: () => Center(
+            child: LoadingWidget(),
+          ),
+          error: (error, stackTrace) {
+            return Center(
+              child: PageErrorWidget(
+                onTap: () {
+                  ref.invalidate(productsProvider);
+                },
+              ),
+            );
+          },
+        ),
       ),
       bottomNavigationBar: BottomNavigationBar(
           items: const [

@@ -19,8 +19,11 @@ class SplashScreen extends ConsumerWidget {
         },
         loading: () {},
         error: (error, stackTrace) {
-          // todo: no exception, continuar para mainscreen com status de falha
-          throw Exception('nao gostou');
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const MainScreen(),
+            ),
+          );
         },
       );
     });

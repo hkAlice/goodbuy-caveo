@@ -21,8 +21,23 @@ class FakeStoreApi {
         },
       );
 
+      //throw Exception("teste!!! :3");
       final List<dynamic> data = response.data;
       return data.map((json) => ProductDto.fromJson(json)).toList();
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout ||
+          e.type == DioExceptionType.sendTimeout) {
+        throw Exception('Conexao falhou a responder. Verifique a conexao com a internet e tente novamente');
+      } else if (e.type == DioExceptionType.connectionError) {
+        throw Exception('Conexao falhou. Verifique a conexao com a internet e tente novamente');
+      } else if (e.response != null) {
+        final statusCode = e.response!.statusCode;
+        if (statusCode != 200) {
+          throw Exception('Erro no servidor');
+        }
+      }
+      throw Exception('Erro: ${e.message}');
     } catch (e) {
       throw Exception('Exception, stack trace: $e');
     }
